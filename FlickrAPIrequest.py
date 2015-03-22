@@ -14,31 +14,33 @@ def get_request(my_params):
 	r = requests.get("https://api.flickr.com/services/rest/", params=my_params)
 	return r.json()
 
-# gets the HTML (in json) for my public photos using Flickr's API
-publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': '61965480@N03'}
-request1 = get_request(publicPhotos)
-print request1
+
+# find a member using their email address. Print out the json response and user id number
+def find_member_id():
+	email_address = raw_input("What is the email address you want to look up? ")
+	findMemberWithEmail = {'method': 'flickr.people.findByEmail', 'find_email': email_address}
+	request1 = get_request(findMemberWithEmail)
+	print request1
+	userIDNumber = request1['user']['nsid']   #nested dict call
+	return userIDNumber
 
 
 # gets list of favorites
-favoritesList = {'method': 'flickr.favorites.getList', 'user_id': '61965480@N03', 'per_page': 5, 'page': 1}
-request2 = get_request(favoritesList)
-print request2
-
-
-# find a member using their email address. Print out the json response and user id number
-email_address = raw_input("What is the email address you want to look up? ")
-findMemberWithEmail = {'method': 'flickr.people.findByEmail', 'find_email': email_address}
-request3 = get_request(findMemberWithEmail)
-print request3
-userIDNumber = request3['user']['nsid']   #nested dict call
-print userIDNumber
+def get_favorites_list(userIDNumber):
+	favoritesList = {'method': 'flickr.favorites.getList', 'user_id': userIDNumber, 'per_page': 5, 'page': 1}
+	request2 = get_request(favoritesList)
+	print request2
+	
+	
+# gets the HTML (in json) for my public photos using Flickr's API
+def get_public_photos(userIDNumber):
+	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber}
+	request3 = get_request(publicPhotos)
+	print request3
 
 
 # get user profile for the person whose email was searched for
-findUserProfile = {'method': 'flickr.urls.getUserProfile', 'user_id': userIDNumber}
-request4 = get_request(findUserProfile)
-print request4
-
-
-
+def find_user_profile(userIDNumber):
+	findUserProfile = {'method': 'flickr.urls.getUserProfile', 'user_id': userIDNumber}
+	request4 = get_request(findUserProfile)
+	print request4
