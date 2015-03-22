@@ -6,8 +6,8 @@ import os
 flickr_api_key = os.environ.get('FLICKR_API_KEY')
 flickr_secret = os.environ.get('FLICKR_SECRET')
 
-# makes functions for common parts amongst all the requests
 def get_request(my_params):
+	'''makes functions for common parts amongst all the requests'''
 	my_params['api_key'] = flickr_api_key
 	my_params['format'] = 'json'
 	my_params['nojsoncallback'] = 1
@@ -15,9 +15,8 @@ def get_request(my_params):
 	return r.json()
 
 
-# find a member using their email address. Print out the json response and user id number
-def find_member_id():
-	email_address = raw_input("What is the email address you want to look up? ")
+def find_member_id(email_address):
+	'''find a member using their email address. Print out the json response and user id number'''
 	findMemberWithEmail = {'method': 'flickr.people.findByEmail', 'find_email': email_address}
 	request1 = get_request(findMemberWithEmail)
 	print request1
@@ -25,22 +24,22 @@ def find_member_id():
 	return userIDNumber
 
 
-# gets list of favorites
 def get_favorites_list(userIDNumber):
+	'''gets list of favorites'''
 	favoritesList = {'method': 'flickr.favorites.getList', 'user_id': userIDNumber, 'per_page': 5, 'page': 1}
 	request2 = get_request(favoritesList)
-	print request2
+	return request2
 	
 	
-# gets the HTML (in json) for my public photos using Flickr's API
 def get_public_photos(userIDNumber):
+	'''gets the HTML (in json) for my public photos using Flickr's API'''
 	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber}
 	request3 = get_request(publicPhotos)
-	print request3
+	return request3
 
 
-# get user profile for the person whose email was searched for
 def find_user_profile(userIDNumber):
+	'''get user profile for the person whose email was searched for'''
 	findUserProfile = {'method': 'flickr.urls.getUserProfile', 'user_id': userIDNumber}
 	request4 = get_request(findUserProfile)
-	print request4
+	return request4
