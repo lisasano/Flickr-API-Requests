@@ -28,14 +28,16 @@ def get_favorites_list(userIDNumber):
 	'''gets list of favorites'''
 	favoritesList = {'method': 'flickr.favorites.getList', 'user_id': userIDNumber, 'per_page': 5, 'page': 1}
 	request2 = get_request(favoritesList)
-	return request2
+	favorite_photos = request2['photos']['photo']
+	return favorite_photos
 	
 	
 def get_public_photos(userIDNumber):
 	'''gets the HTML (in json) for public photos using Flickr's API'''
-	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber}
+	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber, 'per_page': 5, 'page': 1}
 	request3 = get_request(publicPhotos)
-	return request3
+	photo_list = request3['photos']['photo']
+	return photo_list
 
 
 def find_user_profile(userIDNumber):
