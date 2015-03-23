@@ -32,7 +32,7 @@ def get_favorites_list(userIDNumber):
 	
 	
 def get_public_photos(userIDNumber):
-	'''gets the HTML (in json) for my public photos using Flickr's API'''
+	'''gets the HTML (in json) for public photos using Flickr's API'''
 	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber}
 	request3 = get_request(publicPhotos)
 	return request3
