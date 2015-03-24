@@ -18,7 +18,7 @@ def get_request(my_params):
 def find_member_id(email_address):
 	'''find a member using their email address. Print out the json response and user id number'''
 	findMemberWithEmail = {'method': 'flickr.people.findByEmail', 'find_email': email_address}
-	request1 = get_request(findMemberWithEmail)
+	request1 = get_request(findMemberWithEmail)	
 	print request1
 	userIDNumber = request1['user']['nsid']   #nested dict call
 	return userIDNumber

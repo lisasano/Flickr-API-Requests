@@ -1,4 +1,5 @@
 from FlickrAPIrequest import *
+from FlickrPhoto import Photo
 
 
 class User(object):
@@ -7,9 +8,6 @@ class User(object):
 		self.email = email_address
 		
 		self.user_id = find_member_id(self.email)
-	
-		'''self.pub_photos = get_public_photos(self.user_id)
-		self.fave_list = get_favorites_list(self.user_id)'''
 		self.pub_photos = []
 		self.fave_list = []
 		self._set_public_photos()
@@ -42,14 +40,6 @@ class User(object):
 		print self.fave_list
 
 
-class Photo(object):
-	
-	def __init__(self, title, id):
-		self.title = title
-		self.id = id
-		
-	def __str__(self):
-		return self.title
 
 
 '''
