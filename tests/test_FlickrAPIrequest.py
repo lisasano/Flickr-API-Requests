@@ -51,10 +51,14 @@ class TestFindMemberID(unittest.TestCase):
 
 
 	def test_find_user_profile_using_user_id_via_flickr_api(self):
+		mock_return = 'hello'
 		mock_get_request = Mock()
+		mock_get_request.return_value = mock_return
 
 		with patch('FlickrAPIrequest.get_request', mock_get_request):
 			new_profile = FlickrAPIrequest.find_user_profile('fake_id')
+
+		self.assertEqual(new_profile, 'hello')
 
 		expected_dict = {'method': 'flickr.urls.getUserProfile', 'user_id': 'fake_id'}
 
