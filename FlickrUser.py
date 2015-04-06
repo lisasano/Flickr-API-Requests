@@ -1,5 +1,5 @@
 from FlickrAPIrequest import *
-from FlickrPhoto import Photo
+from FlickrPhoto import *
 import psycopg2
 
 class User(object):
@@ -18,13 +18,12 @@ class User(object):
         self._set_public_photos()
         self._set_fave_list()
         self._save_user_info()
-        self._save_public_photo_info()
         
     def _make_photo_instance_from_raw_data(self, raw_photo_data):
         '''creates and returns an instance of class photo'''
         photo_title = raw_photo_data['title']
         photo_id = raw_photo_data['id']
-        photo_instance = Photo(photo_title, photo_id)
+        photo_instance = Photo(photo_title, photo_id, self.user_id)
         return photo_instance
 
     def _set_public_photos(self):
@@ -34,6 +33,8 @@ class User(object):
             new_one = self._make_photo_instance_from_raw_data(photo)
             self.pub_photos.append(new_one)
         print "PUBLIC PHOTOS are: %s" % self.pub_photos
+        for photo in self.pub_photos:
+            photo._save_public_photo_info()
 
 
     def _set_fave_list(self):
@@ -80,39 +81,3 @@ class User(object):
         conn.close()
 
 
-    def _save_public_photo_info(self):
-        conn = psycopg2.connect("dbname=lisa user=lisa")
-        cur = conn.cursor()
-
-        for photo in self.pub_photos:
-            cur.execute(
-                '''
-                    DO
-                    $do$
-                    BEGIN
-                    if exists (SELECT * from flickr_public_photos
-                    WHERE photo_id = %s) THEN
-                        UPDATE flickr_public_photos
-                            SET title = %s
-                            WHERE photo_id = %s;
-                    ELSE
-                        INSERT INTO flickr_public_photos
-                            (user_id, photo_id, title)
-                        VALUES
-                            (%s, %s, %s);
-                    END IF;
-                    END
-                    $do$
-                ''',
-                (photo.id, photo.title, photo.id, self.user_id, photo.id, photo.title)
-
-            )
-
-            cur.execute("SELECT * from flickr_public_photos;")
-            fetch_pub_photo_info = cur.fetchall()
-            print fetch_pub_photo_info
-
-        conn.commit()
-
-        cur.close()
-        conn.close()
