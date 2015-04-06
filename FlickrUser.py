@@ -1,8 +1,9 @@
 from FlickrAPIrequest import *
-from FlickrPhoto import *
+from FlickrPhoto import Photo
+from FlickrModel import Model
 import psycopg2
 
-class User(object):
+class User(Model):
     
     def __init__(self, email_address):
         self.email = email_address
@@ -17,7 +18,7 @@ class User(object):
         self.fave_list = []
         self._set_public_photos()
         self._set_fave_list()
-        self._save_user_info()
+        self.save()
         
     def _make_photo_instance_from_raw_data(self, raw_photo_data):
         '''creates and returns an instance of class photo'''
@@ -34,7 +35,7 @@ class User(object):
             self.pub_photos.append(new_one)
         print "PUBLIC PHOTOS are: %s" % self.pub_photos
         for photo in self.pub_photos:
-            photo._save_public_photo_info()
+            photo.save()
 
 
     def _set_fave_list(self):
@@ -45,39 +46,28 @@ class User(object):
             self.fave_list.append(new_fave)
         print "FAVORITE PHOTOS are: %s" % self.fave_list
 
-    def _save_user_info(self):
-        conn = psycopg2.connect("dbname=lisa user=lisa")
-        cur = conn.cursor()
-        cur.execute(
-            '''
-                DO
-                $do$
-                BEGIN
-                if exists (SELECT * from flickr_user_info 
-                WHERE user_id = %s) THEN
-                    UPDATE flickr_user_info
-                        SET username = %s
-                        WHERE user_id = %s;
-                ELSE
-                    INSERT INTO flickr_user_info
-                        (user_id, username, url)
-                    VALUES
-                        (%s, %s, %s);
-                END IF;
-                END
-                $do$
-            ''',
-            (self.user_id, self.username, self.user_id, self.user_id, self.username, self.url)
-        )
+    def _get_query_string(self):
+        return '''
+            DO
+            $do$
+            BEGIN
+            if exists (SELECT * from flickr_user_info 
+            WHERE user_id = %s) THEN
+                UPDATE flickr_user_info
+                    SET username = %s
+                    WHERE user_id = %s;
+            ELSE
+                INSERT INTO flickr_user_info
+                    (user_id, username, url)
+                VALUES
+                    (%s, %s, %s);
+            END IF;
+            END
+            $do$
+        '''
 
-    
-        cur.execute("SELECT * FROM flickr_user_info;")
-        fetch_user_info = cur.fetchall()
-        print fetch_user_info
+    def _get_query_string_values(self):
+        return (self.user_id, self.username, self.user_id, self.user_id, self.username, self.url)
 
-        conn.commit()
-
-        cur.close()
-        conn.close()
 
 
