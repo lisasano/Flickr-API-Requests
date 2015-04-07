@@ -7,18 +7,33 @@ class User(Model):
     
     def __init__(self, email_address):
         self.email = email_address
+        self.pub_photos = []
+        self.fave_photos = []
         
+
+    def fetch_user_info(self):
         self.user_id = find_member_id_and_username(self.email)['user_id']
         print "USER_ID IS: %s" % self.user_id
         self.username = find_member_id_and_username(self.email)['username']
         print "USERNAME IS: %s" % self.username
         self.url = find_user_profile(self.user_id)
         print "URL IS: %s" % self.url
-        self.pub_photos = []
-        self.fave_list = []
-        self._set_public_photos()
-        self._set_fave_list()
+        
+    def save_user_info(self):
         self.save()
+
+
+    def fetch_public_photos(self):
+        self._set_public_photos()
+
+    def save_public_photos(self):
+        for photo in self.pub_photos:
+            photo.save()
+
+
+    def fetch_fave_photos(self):
+        self._set_fave_list()
+
         
     def _make_photo_instance_from_raw_data(self, raw_photo_data):
         '''creates and returns an instance of class photo'''
@@ -34,8 +49,6 @@ class User(Model):
             new_one = self._make_photo_instance_from_raw_data(photo)
             self.pub_photos.append(new_one)
         print "PUBLIC PHOTOS are: %s" % self.pub_photos
-        for photo in self.pub_photos:
-            photo.save()
 
 
     def _set_fave_list(self):
