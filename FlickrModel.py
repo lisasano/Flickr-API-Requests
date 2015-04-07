@@ -27,6 +27,30 @@ class Model(object):
     def _get_query_string_values(self):
         raise NotImplementedError()
 
+    def load(self):
+        conn = psycopg2.connect("dbname=lisa user=lisa")
+        cur = conn.cursor()
+        load_string = self._get_load_query_string()
+        load_string_values = self._get_load_query_string_values()
+        cur.execute(load_string, load_string_values)
+        record = cur.fetchone()
+        if record:
+            # do something with the data
+            self._set_loaded_data(record)
+        else:
+            print "record does not exist"
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    def _set_loaded_data(self, raw_data):
+        raise NotImplementedError()
+
+    def _get_load_query_string(self):
+        raise NotImplementedError()
+
+    def _get_load_query_string_values(self):
+        raise NotImplementedError()
 
 
 '''

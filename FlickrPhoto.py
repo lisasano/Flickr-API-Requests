@@ -1,4 +1,5 @@
 import psycopg2
+
 from FlickrModel import Model
 
 
@@ -36,5 +37,4 @@ class Photo(Model):
     def _get_query_string_values(self):
         '''return a tuple of values that will get inserted into the query string'''
         return (self.id, self.title, self.id, self.user_id, self.id, self.title)
-
 

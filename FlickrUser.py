@@ -1,7 +1,9 @@
+import psycopg2
+
 from FlickrAPIrequest import *
 from FlickrPhoto import Photo
 from FlickrModel import Model
-import psycopg2
+
 
 class User(Model):
     
@@ -10,7 +12,6 @@ class User(Model):
         self.pub_photos = []
         self.fave_photos = []
         
-
     def fetch_user_info(self):
         self.user_id = find_member_id_and_username(self.email)['user_id']
         print "USER_ID IS: %s" % self.user_id
@@ -18,10 +19,12 @@ class User(Model):
         print "USERNAME IS: %s" % self.username
         self.url = find_user_profile(self.user_id)
         print "URL IS: %s" % self.url
-        
+    
+    def load_user_info(self):
+        self.load()
+
     def save_user_info(self):
         self.save()
-
 
     def fetch_public_photos(self):
         self._set_public_photos()
@@ -30,11 +33,9 @@ class User(Model):
         for photo in self.pub_photos:
             photo.save()
 
-
     def fetch_fave_photos(self):
         self._set_fave_list()
 
-        
     def _make_photo_instance_from_raw_data(self, raw_photo_data):
         '''creates and returns an instance of class photo'''
         photo_title = raw_photo_data['title']
@@ -49,7 +50,6 @@ class User(Model):
             new_one = self._make_photo_instance_from_raw_data(photo)
             self.pub_photos.append(new_one)
         print "PUBLIC PHOTOS are: %s" % self.pub_photos
-
 
     def _set_fave_list(self):
         '''creates and print a list of favorite photos'''
@@ -71,16 +71,29 @@ class User(Model):
                     WHERE user_id = %s;
             ELSE
                 INSERT INTO flickr_user_info
-                    (user_id, username, url)
+                    (user_id, username, url, email_address)
                 VALUES
-                    (%s, %s, %s);
+                    (%s, %s, %s, %s);
             END IF;
             END
             $do$
         '''
 
     def _get_query_string_values(self):
-        return (self.user_id, self.username, self.user_id, self.user_id, self.username, self.url)
+        return (self.user_id, self.username, self.user_id, self.user_id, self.username, self.url, self.email)
 
+    def _get_load_query_string(self):
+        return '''
+            SELECT * from flickr_user_info WHERE email_address = %s;
+        '''
+
+    def _get_load_query_string_values(self):
+        return (self.email,)
+
+    def _set_loaded_data(self, raw_data):
+        self.user_id = raw_data[0]
+        self.username = raw_data[1]
+        self.url = raw_data[2]
+        self.email = raw_data[3]
 
 
