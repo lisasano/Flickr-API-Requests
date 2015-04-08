@@ -38,3 +38,27 @@ class Photo(Model):
         '''return a tuple of values that will get inserted into the query string'''
         return (self.id, self.title, self.id, self.user_id, self.id, self.title)
 
+    @classmethod
+    def load_from_user_id(cls, user_id):
+        photo_list = []
+        conn = psycopg2.connect("dbname=lisa user=lisa")
+        cur = conn.cursor()
+        cur.execute(
+            '''
+            SELECT * from flickr_public_photos where user_id = %s;
+            ''',
+            (user_id,)
+        )
+        records = cur.fetchall()
+        for record in records:
+            # do something with the data
+            user_id = record[0]
+            photo_id = record[1]
+            title = record[2]
+            photo = Photo(title, photo_id, user_id)
+            photo_list.append(photo)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return photo_list
+

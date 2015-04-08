@@ -6,6 +6,7 @@ email_address = raw_input("What is the email address you want to look up? ")
 
 user1 = User(email_address)
 user1.load_user_info()
+user1.load_public_photos()
 
 
 '''

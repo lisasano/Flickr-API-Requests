@@ -96,4 +96,8 @@ class User(Model):
         self.url = raw_data[2]
         self.email = raw_data[3]
 
+    def load_public_photos(self):
+        photos = Photo.load_from_user_id(self.user_id)
+        print photos
+
 
