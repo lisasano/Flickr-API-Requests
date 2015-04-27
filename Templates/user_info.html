@@ -1,0 +1,19 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>User info for {{ user.user_id }}</title>
+
+</head>
+
+<body>
+{{  user.email  }}
+
+{% for photo in user.pub_photos %}
+<img src="{{ photo.make_url()|e }}">
+{% endfor %}
+
+
+</body>
+
+</html>
