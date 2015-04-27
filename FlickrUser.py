@@ -40,7 +40,10 @@ class User(Model):
         '''creates and returns an instance of class photo'''
         photo_title = raw_photo_data['title']
         photo_id = raw_photo_data['id']
-        photo_instance = Photo(photo_title, photo_id, self.user_id)
+        photo_farm = raw_photo_data['farm']
+        photo_server = raw_photo_data['server']
+        photo_secret = raw_photo_data['secret']
+        photo_instance = Photo(photo_title, photo_id, self.user_id, photo_farm, photo_server, photo_secret)
         return photo_instance
 
     def _set_public_photos(self):

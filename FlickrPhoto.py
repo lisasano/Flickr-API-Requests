@@ -5,11 +5,19 @@ from FlickrModel import Model
 
 class Photo(Model):
     
-    def __init__(self, title, photo_id, user_id):
+    def __init__(self, title, photo_id, user_id, farm, server, secret):
         self.title = title
         self.id = photo_id
         self.user_id = user_id
-        
+        self.farm = farm
+        self.server = server
+        self.secret = secret
+
+    def make_url(self):
+        '''format of url is https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg'''
+        self.url = 'https://farm%s.staticflickr.com/%s/%s_%s.jpg' % (self.farm, self.server, self.id, self.secret)
+        return self.url
+
     def __str__(self):
         return self.title
 

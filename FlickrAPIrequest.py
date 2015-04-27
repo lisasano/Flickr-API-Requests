@@ -33,7 +33,7 @@ def get_favorites_list(userIDNumber):
 	
 def get_public_photos(userIDNumber):
 	'''gets the HTML (in json) for public photos using Flickr's API'''
-	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber, 'per_page': 5, 'page': 1}
+	publicPhotos = {'method': 'flickr.people.getPublicPhotos', 'user_id': userIDNumber, 'extras': ['url_t']}
 	request3 = get_request(publicPhotos)
 	photo_list = request3['photos']['photo']
 	# photo_list_dict = {'photo_id': photo_list['id'], 'photo_title': photo_list['title']}
